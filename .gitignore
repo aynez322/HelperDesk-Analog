@@ -1,0 +1,17 @@
+# Dependențe
+node_modules/
+target/
+
+# Build
+dist/
+build/
+
+# Secrete
+.env
+*.env.local
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
