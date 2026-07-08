@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: helpdesk-api
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.security: INFO
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: 86400000   # 24 ore
