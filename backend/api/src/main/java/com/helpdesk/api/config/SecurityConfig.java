@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/health", "/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/tickets").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/tickets/**").hasAnyRole("AGENT", "MANAGER")
+                        .requestMatchers("/api/admin/**").hasRole("MANAGER")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(
                         (request, response, authEx) ->
