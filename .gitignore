@@ -17,3 +17,7 @@ Thumbs.db
 .vscode/
 
 README.md
+
+# Setup script artifacts
+setup-inventory.txt
+setup-appx.txt
