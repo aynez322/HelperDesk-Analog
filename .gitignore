@@ -20,4 +20,5 @@ README.md
 
 # Setup script artifacts
 setup-inventory.txt
-setup-appx.txt
+setup-appx.txt*.log
+*.log.err
