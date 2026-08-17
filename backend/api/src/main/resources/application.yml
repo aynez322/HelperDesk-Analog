@@ -19,6 +19,12 @@ spring:
     enabled: true
     baseline-on-migrate: true
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:helpdesk}
+    password: ${RABBITMQ_PASSWORD:helpdesk}
+
 dotenv:
   directory: ../..
 
