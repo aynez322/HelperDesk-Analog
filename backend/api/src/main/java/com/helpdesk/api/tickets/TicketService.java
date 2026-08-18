@@ -9,10 +9,12 @@ import com.helpdesk.api.domain.TicketPriority;
 import com.helpdesk.api.domain.TicketStatus;
 import com.helpdesk.api.domain.TicketType;
 import com.helpdesk.api.domain.User;
+import com.helpdesk.api.events.TicketCreatedEvent;
 import com.helpdesk.api.repository.CategoryRepository;
 import com.helpdesk.api.repository.MessageRepository;
 import com.helpdesk.api.repository.TicketRepository;
 import com.helpdesk.api.repository.UserRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -47,15 +49,18 @@ public class TicketService {
     private final MessageRepository messageRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public TicketService(TicketRepository ticketRepository,
                          MessageRepository messageRepository,
                          CategoryRepository categoryRepository,
-                         UserRepository userRepository) {
+                         UserRepository userRepository,
+                         ApplicationEventPublisher eventPublisher) {
         this.ticketRepository = ticketRepository;
         this.messageRepository = messageRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -83,7 +88,26 @@ public class TicketService {
                 .createdBy(author)
                 .requesterEmail(req.requesterEmail())
                 .build();
-        ticketRepository.save(ticket);
+        ticket = ticketRepository.save(ticket);
+
+        // Notified address: explicit requester email wins, else the
+        // authenticated author's email (anonymous tickets have no author).
+        String notifyEmail = req.requesterEmail() != null
+                ? req.requesterEmail()
+                : author != null ? author.getEmail() : null;
+
+        // Domain event — forwarded to RabbitMQ by TicketEventPublisher
+        // only after this transaction commits.
+        eventPublisher.publishEvent(new TicketCreatedEvent(
+                ticket.getId(),
+                ticket.getSubject(),
+                ticket.getDescription(),
+                notifyEmail,
+                ticket.getType().name(),
+                ticket.getPriority().name(),
+                category != null ? category.getName() : null,
+                ticket.getCreatedAt()));
+
         return TicketResponse.of(ticket);
     }
 
