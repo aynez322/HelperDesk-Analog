@@ -1,6 +1,6 @@
 services:
   rabbitmq:
-    image: rabbitmq:3.15-management-alpine
+    image: rabbitmq:4.3.5-management-alpine
     container_name: helpdesk-rabbitmq
     restart: unless-stopped
     ports:
