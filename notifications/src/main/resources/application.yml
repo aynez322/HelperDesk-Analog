@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: helpdesk-notifications
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:helpdesk}
+    password: ${RABBITMQ_PASSWORD:helpdesk}
+    listener:
+      simple:
+        # after in-memory retries are exhausted, drop the message instead of
+        # requeueing it into a hot redelivery loop (no DLQ yet)
+        default-requeue-rejected: false
+        retry:
+          enabled: true
+          initial-interval: 1s
+          max-attempts: 3
+          multiplier: 2
+
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+
+dotenv:
+  directory: ..
+
+logging:
+  level:
+    com.helpdesk.notifications: INFO
+
+app:
+  mail:
+    from: ${MAIL_FROM:helpdesk@helpdesk.local}
