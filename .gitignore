@@ -22,3 +22,6 @@ README.md
 setup-inventory.txt
 setup-appx.txt*.log
 *.log.err
+
+# Hermes agent verification manifest
+.hermes/
