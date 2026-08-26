@@ -183,6 +183,11 @@ public class TicketService {
 
     @Transactional
     public MessageResponse addMessage(Long id, AddMessageRequest req, Authentication auth) {
+        return addMessage(id, req.body(), auth);
+    }
+
+    @Transactional
+    public MessageResponse addMessage(Long id, String body, Authentication auth) {
         Ticket ticket = requireTicket(id);
         User sender = auth != null ? requireUser(auth.getName()) : null;
         ensureCanView(ticket, auth);
@@ -198,10 +203,40 @@ public class TicketService {
                 .ticket(ticket)
                 .sender(sender)
                 .senderType(senderType)
-                .body(req.body())
+                .body(body)
                 .build();
         messageRepository.save(message);
         return MessageResponse.of(message);
+    }
+
+    /**
+     * Creates a LIVE ticket from the first chat message (WebSocket flow).
+     * Priority URGENT, status OPEN, subject truncated from the message body.
+     * Anonymous callers must supply a requesterEmail.
+     */
+    @Transactional
+    public Ticket createLiveTicket(String firstMessage, String requesterEmail, Authentication auth) {
+        User author = auth != null ? requireUser(auth.getName()) : null;
+
+        if (author == null && (requesterEmail == null || requesterEmail.isBlank())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "requesterEmail este obligatoriu pentru chat anonim");
+        }
+
+        String subject = firstMessage.length() > 60
+                ? firstMessage.substring(0, 60) + "..."
+                : firstMessage;
+
+        Ticket ticket = Ticket.builder()
+                .subject(subject)
+                .description(firstMessage)
+                .type(TicketType.LIVE)
+                .status(TicketStatus.OPEN)
+                .priority(TicketPriority.URGENT)
+                .createdBy(author)
+                .requesterEmail(requesterEmail)
+                .build();
+        return ticketRepository.save(ticket);
     }
 
     private Ticket requireTicket(Long id) {
