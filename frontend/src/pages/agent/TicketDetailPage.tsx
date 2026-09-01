@@ -68,8 +68,9 @@ export function AgentTicketDetailPage() {
                 <LiveChat ticketId={ticket.id} requesterEmail={ticket.requesterEmail || undefined} />
               </div>
             )}
-            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-4 transition-colors">
-              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Conversation</h3>
+            {ticket.type !== 'LIVE' && (
+              <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-4 transition-colors">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Conversation</h3>
               <div className="space-y-4">
                 {messages.map((msg) => (
                   <div key={msg.id} className={`flex gap-3 ${msg.senderType === 'CLIENT' ? '' : 'flex-row-reverse'}`}>
@@ -83,7 +84,8 @@ export function AgentTicketDetailPage() {
                 {messages.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">No messages yet</p>}
               </div>
             </div>
-            {ticket.status !== 'CLOSED' && (
+            )}
+            {ticket.type !== 'LIVE' && ticket.status !== 'CLOSED' && (
               <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors">
                 <textarea value={reply} onChange={(e) => setReply(e.target.value)} rows={3} placeholder="Type your reply..." maxLength={5000} className={inputClass} />
                 <div className="flex justify-end mt-2"><button onClick={handleReply} disabled={sending || !reply.trim()} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-colors">{sending ? 'Sending...' : 'Send Reply'}</button></div>

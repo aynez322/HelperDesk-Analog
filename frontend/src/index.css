@@ -1,2 +1,69 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* HelperDesk design tokens — light/dark palette */
+:root {
+  color-scheme: light;
+  --app-background: #F8FAFC;
+  --app-card: #FFFFFF;
+  --app-primary: #2563EB;
+  --app-primary-hover: #1D4ED8;
+  --app-text: #0F172A;
+  --app-secondary-text: #64748B;
+  --app-border: #E2E8F0;
+  --app-success: #16A34A;
+  --app-warning: #F59E0B;
+  --app-danger: #DC2626;
+  --app-info: #0EA5E9;
+}
+
+html.dark {
+  color-scheme: dark;
+  --app-background: #0F172A;
+  --app-card: #1E293B;
+  --app-primary: #3B82F6;
+  --app-primary-hover: #60A5FA;
+  --app-text: #F8FAFC;
+  --app-secondary-text: #94A3B8;
+  --app-border: #334155;
+  --app-success: #22C55E;
+  --app-warning: #FBBF24;
+  --app-danger: #EF4444;
+  --app-info: #38BDF8;
+}
+
+@layer base {
+  body {
+    background-color: var(--app-background);
+    color: var(--app-text);
+  }
+}
+
+@layer utilities {
+  .app-background { background-color: var(--app-background); }
+  .app-card { background-color: var(--app-card); }
+  .app-text { color: var(--app-text); }
+  .app-secondary-text { color: var(--app-secondary-text); }
+  .app-border { border-color: var(--app-border); }
+  .app-primary { background-color: var(--app-primary); }
+  .app-primary:hover { background-color: var(--app-primary-hover); }
+
+  /* Keep existing page classes aligned with the new neutral palette. */
+  .bg-gray-50 { background-color: var(--app-background) !important; }
+  .bg-white { background-color: var(--app-card) !important; }
+  .text-gray-900 { color: var(--app-text) !important; }
+  .text-gray-600, .text-gray-500 { color: var(--app-secondary-text) !important; }
+  .border-gray-200, .border-gray-300 { border-color: var(--app-border) !important; }
+
+  /* Tailwind dark utilities used by existing screens. */
+  html.dark .dark\:bg-gray-950 { background-color: #0F172A !important; }
+  html.dark .dark\:bg-gray-900 { background-color: #1E293B !important; }
+  html.dark .dark\:bg-gray-800 { background-color: #334155 !important; }
+  html.dark .dark\:text-white { color: #F8FAFC !important; }
+  html.dark .dark\:text-gray-300,
+  html.dark .dark\:text-gray-400,
+  html.dark .dark\:text-gray-500 { color: #94A3B8 !important; }
+  html.dark .dark\:border-gray-700,
+  html.dark .dark\:border-gray-800,
+  html.dark .dark\:border-gray-600 { border-color: #334155 !important; }
+}

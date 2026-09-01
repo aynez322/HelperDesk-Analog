@@ -31,11 +31,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         : clientLinks;
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
+    <div className="flex h-screen app-background app-text transition-colors">
       {/* Sidebar */}
-      <aside className="w-56 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col shrink-0 transition-colors">
-        <div className="h-14 flex items-center px-4 border-b border-gray-200 dark:border-gray-800">
-          <h1 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
+      <aside className="w-56 app-card border-r app-border flex flex-col shrink-0 transition-colors">
+        <div className="h-14 flex items-center px-4 border-b app-border">
+          <h1 className="text-lg font-bold app-text tracking-tight">
             HelperDesk
           </h1>
         </div>
@@ -47,7 +47,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                    ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200'
                 }`
               }
@@ -58,9 +58,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        <div className="p-3 border-t border-gray-200 dark:border-gray-800">
+        <div className="p-3 border-t app-border">
           <div className="flex items-center gap-2 px-3 py-2">
-            <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-sm font-semibold text-blue-700 dark:text-blue-300">
               {user?.email?.charAt(0).toUpperCase() || '?'}
             </div>
             <div className="flex-1 min-w-0">
@@ -85,7 +85,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
-        <header className="h-14 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-end px-6 shrink-0 transition-colors">
+        <header className="h-14 app-card border-b app-border flex items-center justify-end px-6 shrink-0 transition-colors">
           <button
             onClick={toggleTheme}
             className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"

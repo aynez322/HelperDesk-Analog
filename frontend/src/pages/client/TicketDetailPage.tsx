@@ -62,9 +62,10 @@ export function ClientTicketDetailPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-4 transition-colors">
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Conversation</h3>
-          <div className="space-y-4">
+        {ticket.type !== 'LIVE' && (
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-4 transition-colors">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Conversation</h3>
+            <div className="space-y-4">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex gap-3 ${msg.senderType === 'AGENT' || msg.senderType === 'SYSTEM' ? '' : 'flex-row-reverse'}`}>
                 <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-semibold text-gray-500 dark:text-gray-400 shrink-0">{(msg.senderEmail || msg.senderType).charAt(0).toUpperCase()}</div>
@@ -75,8 +76,9 @@ export function ClientTicketDetailPage() {
               </div>
             ))}
             {messages.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">No messages yet</p>}
+            </div>
           </div>
-        </div>
+        )}
 
         {ticket.type === 'LIVE' && (
           <div className="mb-4">
@@ -84,7 +86,7 @@ export function ClientTicketDetailPage() {
           </div>
         )}
 
-        {ticket.status !== 'CLOSED' && (
+        {ticket.type !== 'LIVE' && ticket.status !== 'CLOSED' && (
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors">
             <textarea value={reply} onChange={(e) => setReply(e.target.value)} rows={3} placeholder="Type your reply..." maxLength={5000} className={inputClass} />
             <div className="flex justify-end mt-2">

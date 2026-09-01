@@ -72,30 +72,33 @@ export function LiveChat({ ticketId, requesterEmail }: LiveChatProps) {
   };
 
   return (
-    <div className="flex flex-col h-[420px] border rounded-lg overflow-hidden bg-white dark:bg-gray-900">
-      <div className="px-4 py-2 border-b font-semibold flex items-center justify-between">
+    <div className="flex flex-col h-[420px] border rounded-lg overflow-hidden app-card app-text app-border shadow-sm">
+      <div className="px-4 py-3 border-b app-border font-semibold flex items-center justify-between">
         <span>Live chat</span>
         {connected ? (
-          <span className="text-xs text-green-600 font-normal">● connected</span>
+          <span className="text-xs font-normal" style={{ color: 'var(--app-success)' }}>● connected</span>
         ) : (
-          <span className="text-xs text-gray-400 font-normal">connecting…</span>
+          <span className="text-xs app-secondary-text font-normal">connecting…</span>
         )}
       </div>
 
-      {error && <div className="px-4 py-2 text-sm text-red-600 bg-red-50">{error}</div>}
+      {error && <div className="px-4 py-2 text-sm border-b" style={{ color: 'var(--app-danger)', backgroundColor: 'color-mix(in srgb, var(--app-danger) 12%, var(--app-card))', borderColor: 'color-mix(in srgb, var(--app-danger) 30%, var(--app-border))' }}>{error}</div>}
 
-      <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+      <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-2 app-background">
         {messages.length === 0 && (
-          <p className="text-sm text-gray-400">Niciun mesaj încă. Spune-ne cu ce te putem ajuta!</p>
+          <p className="text-sm app-secondary-text">Niciun mesaj încă. Spune-ne cu ce te putem ajuta!</p>
         )}
         {messages.map((m) => (
           <div key={m.id} className={`flex ${m.senderType === 'AGENT' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
+              className={`max-w-[75%] rounded-lg px-3 py-2 text-sm border ${
                 m.senderType === 'AGENT'
-                  ? 'bg-indigo-100 dark:bg-indigo-950'
-                  : 'bg-gray-100 dark:bg-gray-800'
+                  ? 'border-blue-200 dark:border-blue-800'
+                  : 'app-border'
               }`}
+              style={m.senderType === 'AGENT'
+                ? { backgroundColor: 'color-mix(in srgb, var(--app-primary) 18%, var(--app-card))', color: 'var(--app-text)' }
+                : { backgroundColor: 'color-mix(in srgb, var(--app-border) 45%, var(--app-card))', color: 'var(--app-text)' }}
             >
               {m.body}
             </div>
@@ -108,17 +111,21 @@ export function LiveChat({ ticketId, requesterEmail }: LiveChatProps) {
           e.preventDefault();
           send();
         }}
-        className="border-t p-2 flex gap-2"
+        className="border-t app-border p-2 flex gap-2 app-card"
       >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Scrieți un mesaj…"
-          className="flex-1 px-3 py-2 text-sm border rounded-lg dark:bg-gray-800"
+          className="flex-1 px-3 py-2 text-sm rounded-lg app-card app-text app-border placeholder:text-slate-400 focus:outline-none focus:ring-2"
+          style={{ outlineColor: 'var(--app-primary)' }}
         />
         <button
           type="submit"
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+          className="px-4 py-2 text-sm font-medium text-white rounded-lg disabled:opacity-50 transition-colors"
+          style={{ backgroundColor: 'var(--app-primary)' }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--app-primary-hover)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--app-primary)'; }}
           disabled={!connected}
         >
           Trimite
