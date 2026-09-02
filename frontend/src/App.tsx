@@ -7,6 +7,7 @@ import { RegisterPage } from './pages/auth/RegisterPage';
 import { CreateTicketPage } from './pages/client/CreateTicketPage';
 import { MyTicketsPage } from './pages/client/MyTicketsPage';
 import { ClientTicketDetailPage } from './pages/client/TicketDetailPage';
+import { StartLiveChatPage } from './pages/client/StartLiveChatPage';
 import { AgentTicketQueuePage } from './pages/agent/TicketQueuePage';
 import { AgentTicketDetailPage } from './pages/agent/TicketDetailPage';
 import { UserAdminPage } from './pages/manager/UserAdminPage';
@@ -31,8 +32,11 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/tickets/:id" element={
-              <ProtectedRoute><ClientTicketDetailPage /></ProtectedRoute>
-            } />
+                          <ProtectedRoute><ClientTicketDetailPage /></ProtectedRoute>
+                        } />
+                        <Route path="/live-chat" element={
+                          <ProtectedRoute><StartLiveChatPage /></ProtectedRoute>
+                        } />
 
             {/* Agent routes */}
             <Route path="/agent/tickets" element={

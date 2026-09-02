@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 const clientLinks = [
+  { to: '/live-chat', label: 'Live Chat', icon: '💬' },
   { to: '/tickets/new', label: 'New Ticket', icon: '＋' },
   { to: '/tickets', label: 'My Tickets', icon: '📋' },
 ];
