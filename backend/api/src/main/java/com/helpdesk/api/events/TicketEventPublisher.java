@@ -42,4 +42,19 @@ public class TicketEventPublisher {
                     event.ticketId(), ex.getMessage(), ex);
         }
     }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onTicketReplied(TicketReplyEvent event) {
+        try {
+            rabbitTemplate.convertAndSend(
+                    RabbitTopologyConfig.EXCHANGE_HELPDESK_EVENTS,
+                    RabbitTopologyConfig.ROUTING_KEY_TICKET_REPLIED,
+                    event);
+            log.info("Published ticket.replied for ticket {} (requester={})",
+                    event.ticketId(), event.requesterEmail());
+        } catch (Exception ex) {
+            log.error("Failed to publish ticket.replied for ticket {}: {}",
+                    event.ticketId(), ex.getMessage(), ex);
+        }
+    }
 }

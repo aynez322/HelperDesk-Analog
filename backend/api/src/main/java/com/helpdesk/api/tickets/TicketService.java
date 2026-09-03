@@ -10,6 +10,7 @@ import com.helpdesk.api.domain.TicketStatus;
 import com.helpdesk.api.domain.TicketType;
 import com.helpdesk.api.domain.User;
 import com.helpdesk.api.events.TicketCreatedEvent;
+import com.helpdesk.api.events.TicketReplyEvent;
 import com.helpdesk.api.repository.CategoryRepository;
 import com.helpdesk.api.repository.MessageRepository;
 import com.helpdesk.api.repository.TicketRepository;
@@ -200,13 +201,26 @@ public class TicketService {
         }
 
         Message message = Message.builder()
-                .ticket(ticket)
-                .sender(sender)
-                .senderType(senderType)
-                .body(body)
-                .build();
-        messageRepository.save(message);
-        return MessageResponse.of(message);
+                        .ticket(ticket)
+                        .sender(sender)
+                        .senderType(senderType)
+                        .body(body)
+                        .build();
+                messageRepository.save(message);
+
+                // Notify the requester by email when staff replies to a FORM ticket
+                // (async path). LIVE tickets stream in real time — no email needed.
+                if (senderType == SenderType.AGENT && ticket.getType() == TicketType.FORM) {
+                    String notifyEmail = ticket.getRequesterEmail() != null
+                            ? ticket.getRequesterEmail()
+                            : ticket.getCreatedBy() != null ? ticket.getCreatedBy().getEmail() : null;
+                    if (notifyEmail != null) {
+                        eventPublisher.publishEvent(new TicketReplyEvent(
+                                ticket.getId(), ticket.getSubject(), notifyEmail, message.getCreatedAt()));
+                    }
+                }
+
+                return MessageResponse.of(message);
     }
 
     /**

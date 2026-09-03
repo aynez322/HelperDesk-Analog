@@ -22,15 +22,19 @@ import org.springframework.context.annotation.Configuration;
  *
  * Topology (see README section 7):
  *   exchange:  helpdesk.events      (topic, durable)
- *   queue:     notifications.email  (durable)
+ *   queue:     notifications.email  (durable, dead-letters to helpdesk.events.dlx)
  *   routing:   ticket.created
+ *   DLX:       helpdesk.events.dlx  (topic, durable; declared by both apps)
  */
 @Configuration
 public class RabbitTopologyConfig {
 
     public static final String EXCHANGE_HELPDESK_EVENTS = "helpdesk.events";
     public static final String QUEUE_NOTIFICATIONS_EMAIL = "notifications.email";
+    public static final String QUEUE_NOTIFICATIONS_EMAIL_REPLY = "notifications.email.reply";
     public static final String ROUTING_KEY_TICKET_CREATED = "ticket.created";
+    public static final String ROUTING_KEY_TICKET_REPLIED = "ticket.replied";
+    public static final String DLX_HELPDESK_EVENTS = "helpdesk.events.dlx";
 
     @Bean
     public TopicExchange helpdeskEventsExchange() {
@@ -38,8 +42,22 @@ public class RabbitTopologyConfig {
     }
 
     @Bean
+    public TopicExchange helpdeskEventsDlx() {
+        return ExchangeBuilder.topicExchange(DLX_HELPDESK_EVENTS).durable(true).build();
+    }
+
+    @Bean
     public Queue notificationsEmailQueue() {
-        return QueueBuilder.durable(QUEUE_NOTIFICATIONS_EMAIL).build();
+        return QueueBuilder.durable(QUEUE_NOTIFICATIONS_EMAIL)
+                .deadLetterExchange(DLX_HELPDESK_EVENTS)
+                .build();
+    }
+
+    @Bean
+    public Queue notificationsEmailReplyQueue() {
+        return QueueBuilder.durable(QUEUE_NOTIFICATIONS_EMAIL_REPLY)
+                .deadLetterExchange(DLX_HELPDESK_EVENTS)
+                .build();
     }
 
     @Bean
@@ -48,6 +66,14 @@ public class RabbitTopologyConfig {
         return BindingBuilder.bind(notificationsEmailQueue)
                 .to(helpdeskEventsExchange)
                 .with(ROUTING_KEY_TICKET_CREATED);
+    }
+
+    @Bean
+    public Binding notificationsEmailReplyBinding(TopicExchange helpdeskEventsExchange,
+                                                  Queue notificationsEmailReplyQueue) {
+        return BindingBuilder.bind(notificationsEmailReplyQueue)
+                .to(helpdeskEventsExchange)
+                .with(ROUTING_KEY_TICKET_REPLIED);
     }
 
     /**

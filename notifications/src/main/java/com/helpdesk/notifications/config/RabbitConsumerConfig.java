@@ -41,13 +41,17 @@ public class RabbitConsumerConfig {
 
     public static final String EXCHANGE_HELPDESK_EVENTS = "helpdesk.events";
     public static final String QUEUE_NOTIFICATIONS_EMAIL = "notifications.email";
+    public static final String QUEUE_NOTIFICATIONS_EMAIL_REPLY = "notifications.email.reply";
     public static final String ROUTING_KEY_TICKET_CREATED = "ticket.created";
+    public static final String ROUTING_KEY_TICKET_REPLIED = "ticket.replied";
 
     public static final String DLX_HELPDESK_EVENTS = "helpdesk.events.dlx";
     public static final String DLQ_NOTIFICATIONS_EMAIL = "notifications.email.dlq";
+    public static final String DLQ_NOTIFICATIONS_EMAIL_REPLY = "notifications.email.reply.dlq";
 
-    /** Type id written by the backend's Jackson2JsonMessageConverter. */
+    /** Type ids written by the backend's Jackson2JsonMessageConverter. */
     public static final String PRODUCER_TICKET_CREATED_TYPE = "com.helpdesk.api.events.TicketCreatedEvent";
+    public static final String PRODUCER_TICKET_REPLIED_TYPE = "com.helpdesk.api.events.TicketReplyEvent";
 
     @Bean
     public TopicExchange helpdeskEventsExchange() {
@@ -73,11 +77,31 @@ public class RabbitConsumerConfig {
     }
 
     @Bean
+    public Queue notificationsEmailReplyQueue() {
+        return QueueBuilder.durable(QUEUE_NOTIFICATIONS_EMAIL_REPLY)
+                .deadLetterExchange(DLX_HELPDESK_EVENTS)
+                .build();
+    }
+
+    @Bean
+    public Queue notificationsEmailReplyDlq() {
+        return QueueBuilder.durable(DLQ_NOTIFICATIONS_EMAIL_REPLY).build();
+    }
+
+    @Bean
     public Binding notificationsEmailBinding(TopicExchange helpdeskEventsExchange,
                                              Queue notificationsEmailQueue) {
         return BindingBuilder.bind(notificationsEmailQueue)
                 .to(helpdeskEventsExchange)
                 .with(ROUTING_KEY_TICKET_CREATED);
+    }
+
+    @Bean
+    public Binding notificationsEmailReplyBinding(TopicExchange helpdeskEventsExchange,
+                                                  Queue notificationsEmailReplyQueue) {
+        return BindingBuilder.bind(notificationsEmailReplyQueue)
+                .to(helpdeskEventsExchange)
+                .with(ROUTING_KEY_TICKET_REPLIED);
     }
 
     @Bean
@@ -90,12 +114,22 @@ public class RabbitConsumerConfig {
     }
 
     @Bean
+    public Binding notificationsEmailReplyDlqBinding(TopicExchange helpdeskEventsDlx,
+                                                     Queue notificationsEmailReplyDlq) {
+        return BindingBuilder.bind(notificationsEmailReplyDlq)
+                .to(helpdeskEventsDlx)
+                .with(ROUTING_KEY_TICKET_REPLIED);
+    }
+
+    @Bean
     public MessageConverter jacksonMessageConverter(ObjectMapper objectMapper) {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter(objectMapper);
         DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
         typeMapper.setIdClassMapping(Map.of(
                 PRODUCER_TICKET_CREATED_TYPE,
-                com.helpdesk.notifications.events.TicketCreatedEvent.class));
+                com.helpdesk.notifications.events.TicketCreatedEvent.class,
+                PRODUCER_TICKET_REPLIED_TYPE,
+                com.helpdesk.notifications.events.TicketReplyEvent.class));
         converter.setJavaTypeMapper(typeMapper);
         return converter;
     }
