@@ -7,16 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-/**
- * Forwards domain events to RabbitMQ after the producing transaction has
- * committed (AFTER_COMMIT phase).
- *
- * Send failures are logged, never propagated: losing a confirmation-email
- * event must not fail the (already committed) ticket-creation request.
- * Known limitation: there is no outbox/retry, so a broker outage between
- * commit and publish drops the event. Acceptable until a delivery guarantee
- * is required.
- */
 @Component
 public class TicketEventPublisher {
 

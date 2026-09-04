@@ -9,8 +9,7 @@ spring:
     password: ${RABBITMQ_PASSWORD:helpdesk}
     listener:
       simple:
-        # after in-memory retries are exhausted, drop the message instead of
-        # requeueing it into a hot redelivery loop (no DLQ yet)
+
         default-requeue-rejected: false
         retry:
           enabled: true

@@ -18,11 +18,6 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Repository + Flyway integration test against a throwaway PostgreSQL
- * container. Validates that the migrations apply cleanly and that the
- * search query enforces filtering/ordering against a real DB.
- */
 @SpringBootTest
 @ActiveProfiles("test")
 @Testcontainers
@@ -40,11 +35,9 @@ class TicketRepositoryIntegrationTest {
     void flywayMigrationsApplyAndSearchFilters() {
         User agent = userRepository.findByEmail("agent@helpdesk.local").orElse(null);
         if (agent == null) {
-            // V3 only seeds a MANAGER; create a CLIENT + AGENT inline via repos
-            // not needed — we assert on seeded manager-only data + ticket persistence.
+
         }
 
-        // The schema has the seeded MANAGER (from V3) — sanity check Flyway ran.
         assertThat(userRepository.findByEmail("manager@helpdesk.local")).isPresent();
     }
 

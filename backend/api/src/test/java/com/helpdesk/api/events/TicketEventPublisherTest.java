@@ -30,8 +30,7 @@ class TicketEventPublisherTest {
 
     @Test
     void propagatesNothingWhenBrokerDown() {
-        // By design a broker outage must not fail the (already committed)
-        // ticket creation — the publisher swallows the exception and logs.
+
         TicketEventPublisher publisher = new TicketEventPublisher(rabbitTemplate);
         TicketCreatedEvent event = new TicketCreatedEvent(
                 2L, "S", "D", "a@example.com", "FORM", "NORMAL", null, LocalDateTime.now());
@@ -39,7 +38,6 @@ class TicketEventPublisherTest {
         doThrow(new AmqpException("connection refused"))
                 .when(rabbitTemplate).convertAndSend(anyString(), anyString(), any(Object.class));
 
-        // Should not throw
         publisher.onTicketCreated(event);
     }
 }

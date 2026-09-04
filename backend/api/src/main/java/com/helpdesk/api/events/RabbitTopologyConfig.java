@@ -12,20 +12,6 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * RabbitMQ topology for the helpdesk event stream.
- *
- * The publisher declares the full topology (durable topic exchange, durable
- * queue, binding) so that {@code ticket.created} events are buffered by the
- * broker even while the Notifications consumer is not running. Declarables
- * are auto-declared by Spring's RabbitAdmin on first connection.
- *
- * Topology (see README section 7):
- *   exchange:  helpdesk.events      (topic, durable)
- *   queue:     notifications.email  (durable, dead-letters to helpdesk.events.dlx)
- *   routing:   ticket.created
- *   DLX:       helpdesk.events.dlx  (topic, durable; declared by both apps)
- */
 @Configuration
 public class RabbitTopologyConfig {
 
@@ -76,11 +62,6 @@ public class RabbitTopologyConfig {
                 .with(ROUTING_KEY_TICKET_REPLIED);
     }
 
-    /**
-     * JSON message conversion using Spring Boot's auto-configured ObjectMapper
-     * (JavaTimeModule registered), so {@code LocalDateTime} fields serialize
-     * as ISO-8601 strings.
-     */
     @Bean
     public MessageConverter jacksonMessageConverter(ObjectMapper objectMapper) {
         return new Jackson2JsonMessageConverter(objectMapper);

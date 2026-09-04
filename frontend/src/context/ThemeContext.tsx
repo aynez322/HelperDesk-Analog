@@ -15,7 +15,6 @@ function getInitialTheme(): Theme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-// Apply theme class to <html> immediately (before React renders)
 const initialTheme = getInitialTheme();
 document.documentElement.classList.toggle('dark', initialTheme === 'dark');
 

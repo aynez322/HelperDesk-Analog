@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* HelperDesk design tokens — light/dark palette */
 :root {
   color-scheme: light;
   --app-background: #F8FAFC;
@@ -48,14 +47,12 @@ html.dark {
   .app-primary { background-color: var(--app-primary); }
   .app-primary:hover { background-color: var(--app-primary-hover); }
 
-  /* Keep existing page classes aligned with the new neutral palette. */
   .bg-gray-50 { background-color: var(--app-background) !important; }
   .bg-white { background-color: var(--app-card) !important; }
   .text-gray-900 { color: var(--app-text) !important; }
   .text-gray-600, .text-gray-500 { color: var(--app-secondary-text) !important; }
   .border-gray-200, .border-gray-300 { border-color: var(--app-border) !important; }
 
-  /* Tailwind dark utilities used by existing screens. */
   html.dark .dark\:bg-gray-950 { background-color: #0F172A !important; }
   html.dark .dark\:bg-gray-900 { background-color: #1E293B !important; }
   html.dark .dark\:bg-gray-800 { background-color: #334155 !important; }

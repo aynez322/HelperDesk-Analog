@@ -1,11 +1,6 @@
 import { Client, type IMessage, type StompSubscription } from '@stomp/stompjs';
 import type { Message } from '../types';
 
-/**
- * Thin STOMP client wrapper for the live-chat backend.
- * Endpoint /ws (plain WebSocket, no SockJS); auth via Authorization header
- * attached by @stomp/stompjs using the connection's connectHeaders.
- */
 export class ChatClient {
   private client: Client | null = null;
   private subscriptions: StompSubscription[] = [];

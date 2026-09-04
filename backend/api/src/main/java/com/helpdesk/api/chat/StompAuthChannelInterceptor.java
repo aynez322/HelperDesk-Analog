@@ -15,13 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-/**
- * Authenticates STOMP CONNECT frames carrying {@code Authorization: Bearer <jwt>}.
- * Mirrors JwtAuthenticationFilter: token subject = email, authorities reloaded
- * from the DB via {@link AppUserDetailsService}. Anonymous connections (no header)
- * are allowed — a live chat can be started without an account, matching the
- * anonymous FORM-ticket flow.
- */
 @Component
 public class StompAuthChannelInterceptor implements ChannelInterceptor {
 
@@ -45,7 +38,7 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
 
         String header = accessor.getFirstNativeHeader("Authorization");
         if (!StringUtils.hasText(header) || !header.startsWith("Bearer ")) {
-            return message; // anonymous live-chat client
+            return message;
         }
 
         String token = header.substring(7);

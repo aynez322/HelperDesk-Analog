@@ -11,11 +11,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-/**
- * Consumes {@code ticket.replied} events from {@code notifications.email.reply}
- * and emails the requester that a support agent has answered their ticket
- * (Romanian copy, per project convention for user-facing strings).
- */
 @Component
 public class TicketReplyEmailListener {
 

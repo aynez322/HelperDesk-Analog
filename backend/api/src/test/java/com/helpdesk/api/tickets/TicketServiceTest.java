@@ -78,8 +78,6 @@ class TicketServiceTest {
                 List.of(new SimpleGrantedAuthority("ROLE_" + role)));
     }
 
-    // ---------- create() ----------
-
     @Test
     void create_anonymousWithoutEmail_throws400() {
         CreateTicketRequest req = new CreateTicketRequest("Subject", "Desc", null, null);
@@ -142,8 +140,6 @@ class TicketServiceTest {
                 .isEqualTo(HttpStatus.NOT_FOUND);
     }
 
-    // ---------- update() / state machine ----------
-
     @Test
     void update_nonStaff_throws403() {
         UpdateTicketRequest req = new UpdateTicketRequest(TicketStatus.IN_PROGRESS, null, null);
@@ -156,7 +152,7 @@ class TicketServiceTest {
     @Test
     void update_illegalTransition_throws409() {
         when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket(1L, client, TicketStatus.OPEN, TicketPriority.NORMAL)));
-        // OPEN -> RESOLVED is illegal (must go through IN_PROGRESS)
+
         UpdateTicketRequest req = new UpdateTicketRequest(TicketStatus.RESOLVED, null, null);
         assertThatThrownBy(() -> service.update(1L, req, auth(agent, "AGENT")))
                 .isInstanceOf(ResponseStatusException.class)
@@ -233,8 +229,6 @@ class TicketServiceTest {
         assertThat(response.closedAt()).isNull();
     }
 
-    // ---------- get() / ownership ----------
-
     @Test
     void get_ownerClient_canView() {
         Ticket t = ticket(1L, client, TicketStatus.OPEN, TicketPriority.NORMAL);
@@ -278,8 +272,6 @@ class TicketServiceTest {
                 .isEqualTo(HttpStatus.NOT_FOUND);
     }
 
-    // ---------- addMessage() ----------
-
     @Test
     void addMessage_anonymousClient_senderTypeClient() {
         Ticket t = ticket(1L, null, TicketStatus.OPEN, TicketPriority.NORMAL);
@@ -314,8 +306,6 @@ class TicketServiceTest {
         assertThat(response.senderEmail()).isEqualTo(agent.getEmail());
     }
 
-    // ---------- createLiveTicket() ----------
-
     @Test
     void createLiveTicket_anonymousWithoutEmail_throws400() {
         assertThatThrownBy(() -> service.createLiveTicket("Hi", null, null))
@@ -346,11 +336,9 @@ class TicketServiceTest {
         when(ticketRepository.save(any(Ticket.class))).thenAnswer(inv -> inv.getArgument(0));
         String longMsg = "a".repeat(200);
         Ticket t = service.createLiveTicket(longMsg, "anon@example.com", null);
-        assertThat(t.getSubject()).hasSize(63); // 60 + "..."
+        assertThat(t.getSubject()).hasSize(63);
         assertThat(t.getSubject()).endsWith("...");
     }
-
-    // ---------- list() / client auto-scoping ----------
 
     @Test
     void list_clientOnlySeesOwnTickets() {

@@ -7,7 +7,6 @@ import { ChatClient } from '../../chat/ChatClient';
 import { useAuth } from '../../context/AuthContext';
 import type { TicketSummary, TicketStatus, TicketPriority } from '../../types';
 
-/** Live watch on /topic/agents/inbox — surfaces new LIVE tickets in real time. */
 function AgentInboxWatch() {
   const { token } = useAuth();
   const [notices, setNotices] = useState<TicketSummary[]>([]);

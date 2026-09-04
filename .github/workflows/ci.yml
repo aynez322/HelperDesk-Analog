@@ -19,8 +19,7 @@ jobs:
       - name: Build and test backend
         working-directory: backend/api
         run: |
-          # Testcontainers spins up a disposable Postgres; the "test" profile
-          # overrides datasource + JWT secret so CI never touches Supabase.
+
           mvn -B -ntp test
       - name: Upload backend test reports
         if: always()

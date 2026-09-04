@@ -10,7 +10,7 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
-      // STOMP live chat — forwarded the same way as the REST API.
+
       '/ws': {
         target: 'ws://localhost:8080',
         ws: true,

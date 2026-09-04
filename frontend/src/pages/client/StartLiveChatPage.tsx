@@ -5,20 +5,6 @@ import { ChatClient } from '../../chat/ChatClient';
 import { api } from '../../api/client';
 import { Layout } from '../../components/Layout';
 
-/**
- * "Start Live Chat" entry point for authenticated users with an urgent issue.
- *
- * Flow:
- * 1. Connect to STOMP (JWT auth from AuthContext).
- * 2. On first message, publish to /app/chat.send WITHOUT a ticketId — the
- *    backend mints a LIVE ticket (URGENT/OPEN) and broadcasts it to the agents
- *    inbox.
- * 3. The minted ticket belongs to the current user, so we poll their OWN ticket
- *    list (newest first) until the freshly created LIVE ticket shows up, then
- *    navigate to it — the detail page renders the LiveChat panel. This avoids
- *    relying on private STOMP user destinations (the project broker uses /topic
- *    broadcasts only).
- */
 export function StartLiveChatPage() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -58,7 +44,6 @@ export function StartLiveChatPage() {
     setError(null);
     chatRef.current.send(body, undefined, undefined); // no ticketId → mints LIVE
 
-    // Poll own tickets (newest first) until the freshly minted LIVE ticket is the top row.
     const startedFrom = Date.now();
     pollRef.current = setInterval(async () => {
       try {

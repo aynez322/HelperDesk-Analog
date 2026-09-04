@@ -1,6 +1,4 @@
-# Test profile. Used by integration tests that spin up a disposable
-# PostgreSQL via Testcontainers (@ServiceConnection overrides these).
-# JWT secret is a fixed 64-char dev value — never used for signing in prod.
+
 spring:
   datasource:
     url: ${TEST_DB_URL:jdbc:tc:postgresql:16:///helpdesk}

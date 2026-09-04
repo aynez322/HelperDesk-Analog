@@ -91,14 +91,10 @@ public class TicketService {
                 .build();
         ticket = ticketRepository.save(ticket);
 
-        // Notified address: explicit requester email wins, else the
-        // authenticated author's email (anonymous tickets have no author).
         String notifyEmail = req.requesterEmail() != null
                 ? req.requesterEmail()
                 : author != null ? author.getEmail() : null;
 
-        // Domain event — forwarded to RabbitMQ by TicketEventPublisher
-        // only after this transaction commits.
         eventPublisher.publishEvent(new TicketCreatedEvent(
                 ticket.getId(),
                 ticket.getSubject(),
@@ -208,8 +204,6 @@ public class TicketService {
                         .build();
                 messageRepository.save(message);
 
-                // Notify the requester by email when staff replies to a FORM ticket
-                // (async path). LIVE tickets stream in real time — no email needed.
                 if (senderType == SenderType.AGENT && ticket.getType() == TicketType.FORM) {
                     String notifyEmail = ticket.getRequesterEmail() != null
                             ? ticket.getRequesterEmail()
@@ -223,11 +217,6 @@ public class TicketService {
                 return MessageResponse.of(message);
     }
 
-    /**
-     * Creates a LIVE ticket from the first chat message (WebSocket flow).
-     * Priority URGENT, status OPEN, subject truncated from the message body.
-     * Anonymous callers must supply a requesterEmail.
-     */
     @Transactional
     public Ticket createLiveTicket(String firstMessage, String requesterEmail, Authentication auth) {
         User author = auth != null ? requireUser(auth.getName()) : null;

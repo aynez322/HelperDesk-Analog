@@ -5,20 +5,11 @@ import { ChatClient } from './ChatClient';
 import { useAuth } from '../context/AuthContext';
 
 interface LiveChatProps {
-  /** Live wire this chat to an existing ticket's message stream. */
+
   ticketId: number;
   requesterEmail?: string;
 }
 
-/**
- * Live-chat panel wired to a ticket over STOMP.
- * - Loads existing history via REST on mount.
- * - Subscribes to /topic/tickets/{id} and appends new messages in real time.
- * - Sends follow-ups to /app/chat.send with the ticket id.
- *
- * Both CLIENT and AGENT can use this panel on a ticket detail page; the
- * backend enforces ownership/staff rules at the service layer.
- */
 export function LiveChat({ ticketId, requesterEmail }: LiveChatProps) {
   const { token } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -33,14 +24,13 @@ export function LiveChat({ ticketId, requesterEmail }: LiveChatProps) {
     const client = new ChatClient();
     chatRef.current = client;
 
-    // Existing history via REST (works for owner / staff).
     void api
       .getMessages(ticketId)
       .then((history) => {
         if (alive) setMessages(history);
       })
       .catch(() => {
-        // owner/staff only; a forbidden read is fine — WS still streams
+
       });
 
     client

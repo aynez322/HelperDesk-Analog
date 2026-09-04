@@ -11,16 +11,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-/**
- * Consumes {@code ticket.created} events from {@code notifications.email} and
- * sends a confirmation email to the requester (Romanian copy, per project
- * convention for user-facing strings).
- *
- * Delivery semantics: with in-memory retry (3 attempts) configured and
- * {@code default-requeue-rejected: false}, an email that keeps failing after
- * retries is dropped with an error log — no requeue hot loop. There is no DLQ
- * yet; add one before relying on this in production.
- */
 @Component
 public class TicketCreatedEmailListener {
 
