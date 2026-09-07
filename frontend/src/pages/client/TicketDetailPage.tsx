@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import { Layout } from '../../components/Layout';
 import { StatusBadge, PriorityBadge } from '../../components/Badges';
+import { LiveChat } from '../../chat/LiveChat';
 import type { Ticket, Message } from '../../types';
 
 const inputClass = 'w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent resize-y placeholder-gray-400 dark:placeholder-gray-500';
@@ -76,6 +77,12 @@ export function ClientTicketDetailPage() {
             {messages.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">No messages yet</p>}
           </div>
         </div>
+
+        {ticket.type === 'LIVE' && (
+          <div className="mb-4">
+            <LiveChat ticketId={ticket.id} requesterEmail={ticket.requesterEmail || undefined} />
+          </div>
+        )}
 
         {ticket.status !== 'CLOSED' && (
           <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors">

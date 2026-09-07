@@ -3,7 +3,47 @@ import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import { Layout } from '../../components/Layout';
 import { StatusBadge, PriorityBadge } from '../../components/Badges';
+import { ChatClient } from '../../chat/ChatClient';
+import { useAuth } from '../../context/AuthContext';
 import type { TicketSummary, TicketStatus, TicketPriority } from '../../types';
+
+/** Live watch on /topic/agents/inbox — surfaces new LIVE tickets in real time. */
+function AgentInboxWatch() {
+  const { token } = useAuth();
+  const [notices, setNotices] = useState<TicketSummary[]>([]);
+
+  useEffect(() => {
+    const client = new ChatClient();
+    client
+      .connect(token)
+      .then(() => {
+        client.onAgentInbox((t) => {
+          setNotices((prev) => [{ subject: t.subject, id: t.id } as TicketSummary, ...prev].slice(0, 5));
+        });
+      })
+      .catch(() => {});
+    return () => client.disconnect();
+  }, [token]);
+
+  if (notices.length === 0) return null;
+  return (
+    <div className="mb-6 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950 p-4">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+        <span className="text-sm font-semibold text-amber-800 dark:text-amber-300">New live tickets</span>
+      </div>
+      <ul className="space-y-1">
+        {notices.map((t) => (
+          <li key={t.id}>
+            <Link to={`/agent/tickets/${t.id}`} className="text-sm text-indigo-700 dark:text-indigo-300 hover:underline">
+              #{t.id} — {t.subject}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function AgentTicketQueuePage() {
   const [allTickets, setAllTickets] = useState<TicketSummary[]>([]);
@@ -51,6 +91,8 @@ export function AgentTicketQueuePage() {
     <Layout>
       <div className="p-6">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Ticket Queue</h2>
+
+        <AgentInboxWatch />
 
         {/* Quick stats */}
         <div className="grid grid-cols-5 gap-3 mb-6">

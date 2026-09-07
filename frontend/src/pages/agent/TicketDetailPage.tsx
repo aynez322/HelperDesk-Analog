@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import { Layout } from '../../components/Layout';
 import { StatusBadge, PriorityBadge } from '../../components/Badges';
+import { LiveChat } from '../../chat/LiveChat';
 import type { Ticket, Message, TicketStatus, TicketPriority } from '../../types';
 
 const STATUSES: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'];
@@ -62,6 +63,11 @@ export function AgentTicketDetailPage() {
               <div className="flex flex-wrap gap-2 mb-3"><StatusBadge status={ticket.status} /><PriorityBadge priority={ticket.priority} />{ticket.categoryName && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">{ticket.categoryName}</span>}</div>
               {ticket.description && <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{ticket.description}</p>}
             </div>
+            {ticket.type === 'LIVE' && (
+              <div className="mb-4">
+                <LiveChat ticketId={ticket.id} requesterEmail={ticket.requesterEmail || undefined} />
+              </div>
+            )}
             <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-4 transition-colors">
               <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Conversation</h3>
               <div className="space-y-4">
