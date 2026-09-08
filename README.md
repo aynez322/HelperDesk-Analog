@@ -1,55 +1,58 @@
 # HelperDesk-Analog
 
-O aplicație full-stack de help desk pentru gestionarea solicitărilor de suport prin două canale: tichete asincrone create prin formular și chat live pentru situații urgente.
+HelperDesk-Analog is a full-stack help desk application for managing customer support requests through two communication channels:
 
-Proiectul a fost dezvoltat în cadrul stagiului de practică la **LAZAR Software** și acoperă întregul flux de dezvoltare: modelare, backend, frontend, comunicare între servicii, testare și CI.
+- **FORM tickets** for asynchronous support requests;
+- **LIVE chat** for urgent issues that require real-time communication.
 
-> **Status:** MVP funcțional. Aplicația poate fi rulată local folosind PostgreSQL/Supabase, RabbitMQ și MailHog.
+The project was developed during an internship at **LAZAR Software**. It covers the full development flow, from data modeling and backend implementation to frontend development, service integration, automated testing and CI.
 
-## Cuprins
+> **Status:** Functional MVP. The application can be run locally with PostgreSQL/Supabase, RabbitMQ and MailHog.
 
-- [Funcționalități](#funcționalități)
-- [Arhitectură](#arhitectură)
+## Contents
+
+- [Features](#features)
+- [Architecture](#architecture)
 - [Tech stack](#tech-stack)
-- [Capturi și diagrame](#capturi-și-diagrame)
-- [Cerințe](#cerințe)
-- [Configurare](#configurare)
-- [Pornirea proiectului](#pornirea-proiectului)
-- [Conturi și roluri](#conturi-și-roluri)
-- [Testare](#testare)
-- [Structura proiectului](#structura-proiectului)
+- [Screenshots and diagrams](#screenshots-and-diagrams)
+- [Requirements](#requirements)
+- [Configuration](#configuration)
+- [Running the project](#running-the-project)
+- [Roles](#roles)
+- [Testing](#testing)
+- [Project structure](#project-structure)
 - [Roadmap](#roadmap)
 
-## Funcționalități
+## Features
 
-### Pentru clienți
+### Clients
 
-- înregistrare și autentificare;
-- creare de tichete FORM prin formular;
-- vizualizarea propriilor tichete și a istoricului conversației;
-- primirea notificărilor prin e-mail;
-- pornirea unui chat LIVE pentru probleme urgente;
-- transmiterea mesajelor în timp real prin WebSocket/STOMP.
+- register and log in;
+- create FORM tickets through a support form;
+- view their own tickets and conversation history;
+- receive e-mail notifications;
+- start a LIVE chat for urgent issues;
+- exchange messages in real time through WebSocket/STOMP.
 
-### Pentru agenți
+### Agents
 
-- vizualizarea cozii de tichete;
-- filtre după status și prioritate;
-- primirea în timp real a tichetelor LIVE noi;
-- asignarea și actualizarea tichetelor;
-- răspunsuri prin conversație REST pentru FORM;
-- răspunsuri prin chat live pentru LIVE.
+- view the ticket queue;
+- filter tickets by status and priority;
+- receive new LIVE-ticket notifications in real time;
+- assign and update tickets;
+- reply to FORM tickets through the platform;
+- reply to LIVE tickets through real-time chat.
 
-### Pentru manageri
+### Managers
 
-- toate operațiile disponibile agenților;
-- listarea utilizatorilor;
-- crearea utilizatorilor;
-- schimbarea rolurilor.
+- use all agent capabilities;
+- list users;
+- create users;
+- change user roles.
 
-### Fluxuri de comunicare
+### Communication flows
 
-**FORM — asincron:**
+**FORM — asynchronous support:**
 
 ```text
 Client → REST API → PostgreSQL
@@ -57,17 +60,17 @@ Client → REST API → PostgreSQL
                 RabbitMQ → Notifications → SMTP/MailHog
 ```
 
-**LIVE — în timp real:**
+**LIVE — real-time support:**
 
 ```text
 Client ↔ WebSocket/STOMP ↔ Spring Boot API ↔ Agent
 ```
 
-Un tichet FORM rămâne FORM. Un tichet LIVE este creat atunci când clientul trimite primul mesaj fără `ticketId`.
+A FORM ticket remains a FORM ticket throughout its lifecycle. A LIVE ticket is created when the client sends the first chat message without an existing `ticketId`.
 
-## Arhitectură
+## Architecture
 
-Aplicația este organizată ca un **modular monolith Spring Boot**, împreună cu un microserviciu separat pentru notificări.
+The application uses a **Spring Boot modular monolith** for the main API and a separate Notifications service for e-mail delivery.
 
 ```text
 ┌──────────────────────┐
@@ -92,84 +95,84 @@ Aplicația este organizată ca un **modular monolith Spring Boot**, împreună c
 └──────────────────────┘
 ```
 
-Backend-ul publică evenimente după salvarea cu succes a datelor. Microserviciul Notifications consumă evenimentele și trimite e-mailuri. Mesajele care nu pot fi procesate după retry ajung în dead-letter queue.
+The API publishes events after successful database operations. The Notifications service consumes those events and sends e-mails. Messages that cannot be processed after the configured retries are routed to a dead-letter queue.
 
 ## Tech stack
 
-| Zonă | Tehnologii |
+| Area | Technologies |
 |---|---|
 | Backend | Java 21, Spring Boot 3.5, Spring Web, Spring Data JPA, Hibernate |
-| Securitate | Spring Security, JWT, BCrypt, RBAC |
-| Bază de date | PostgreSQL, Supabase, Flyway |
-| Mesagerie | RabbitMQ, Spring AMQP |
-| Comunicare live | WebSocket, STOMP, `@stomp/stompjs` |
+| Security | Spring Security, JWT, BCrypt, role-based access control |
+| Database | PostgreSQL, Supabase, Flyway |
+| Messaging | RabbitMQ, Spring AMQP |
+| Real-time communication | WebSocket, STOMP, `@stomp/stompjs` |
 | Frontend | React 19, TypeScript, Vite, React Router |
-| Stilizare | Tailwind CSS 4, CSS variables, light/dark mode |
+| Styling | Tailwind CSS 4, CSS variables, light/dark mode |
 | E-mail | Spring Mail, SMTP, MailHog |
-| Testare | JUnit, Mockito, Testcontainers, Vitest, React Testing Library |
+| Testing | JUnit, Mockito, Testcontainers, Vitest, React Testing Library |
 | DevOps | Docker Compose, Maven, npm, GitHub Actions |
 
-## Capturi și diagrame
+## Screenshots and diagrams
 
-Imaginile de mai jos sunt placeholdere. Pot fi înlocuite cu capturi reale din aplicație, fără modificarea structurii README-ului.
+The README uses project screenshots and a placeholder for the agent queue until a dedicated capture is available.
 
-### Arhitectura aplicației
+### Application architecture
 
-![Diagrama arhitecturii aplicației](docs/images/arhitectura.png)
+![Application architecture diagram](docs/images/arhitectura.png)
 
-### Login și înregistrare
+### Login and registration
 
-![Interfața de autentificare](docs/images/autentificare.png)
+![Authentication interface](docs/images/autentificare.png)
 
-### Coada agentului
+### Agent queue
 
-![Coada agentului](docs/images/agent-queue.png)
+![Agent ticket queue](docs/images/agent-queue.png)
 
-### Formular FORM
+### FORM ticket workflow
 
-![Crearea unui tichet FORM](docs/images/ticket-workflow.png)
+![FORM ticket workflow](docs/images/ticket-workflow.png)
 
-### Chat LIVE
+### LIVE chat
 
-![Chat live între client și agent](docs/images/live-chat.png)
+![Client-agent live chat](docs/images/live-chat.png)
 
-## Cerințe
+## Requirements
 
-Pentru rulare locală sunt necesare:
+The following tools are required for local development:
 
 - Java 21;
-- Maven sau Maven Wrapper;
-- Node.js 24 și npm;
-- Docker Desktop cu Docker Compose;
-- un proiect PostgreSQL/Supabase accesibil prin JDBC;
+- Maven or the Maven Wrapper;
+- Node.js 24 and npm;
+- Docker Desktop with Docker Compose;
+- an accessible PostgreSQL/Supabase database;
 - Git.
 
-Node.js 24 este versiunea folosită de workflow-ul frontend din GitHub Actions. Docker este necesar pentru RabbitMQ și MailHog.
+Node.js 24 is the version used by the frontend GitHub Actions workflow. Docker is required for RabbitMQ and MailHog.
 
-## Configurare
+## Configuration
 
-1. Clonează repository-ul:
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/aynez322/HelperDesk-Analog.git
 cd HelperDesk-Analog
 ```
 
-2. Creează fișierul `.env` în rădăcina proiectului, pornind de la exemplu:
+2. Create a root `.env` file from the example:
 
 ```bash
 cp .env.example .env
 ```
 
-Pe Windows Git Bash, aceeași comandă poate fi folosită din rădăcina proiectului.
+On Windows, the same command can be run from Git Bash.
 
-3. Completează valorile pentru baza de date și secretul JWT:
+3. Fill in the database connection and JWT secret:
 
 ```env
 DB_URL=jdbc:postgresql://<host>:5432/postgres
 DB_USER=postgres
-DB_PASSWORD=parola-bazei-de-date
-JWT_SECRET=un-secret-random-de-cel-putin-32-caractere
+DB_PASSWORD=your-database-password
+JWT_SECRET=a-random-secret-with-at-least-32-characters
 
 RABBITMQ_HOST=localhost
 RABBITMQ_PORT=5672
@@ -181,37 +184,37 @@ MAIL_PORT=1025
 MAIL_FROM=helpdesk@helpdesk.local
 ```
 
-Fișierul `.env` nu trebuie comis în repository.
+Do not commit `.env` to the repository.
 
-## Pornirea proiectului
+## Running the project
 
-### 1. Pornește infrastructura locală
+### 1. Start local infrastructure
 
-Din rădăcina proiectului:
+From the repository root:
 
 ```bash
 docker compose up -d
 ```
 
-Servicii disponibile:
+Available services:
 
-| Serviciu | URL / port |
+| Service | URL / port |
 |---|---|
 | RabbitMQ AMQP | `localhost:5672` |
 | RabbitMQ Management UI | http://localhost:15672 |
 | MailHog SMTP | `localhost:1025` |
 | MailHog Web UI | http://localhost:8025 |
 
-### 2. Pornește backend-ul API
+### 2. Start the backend API
 
 ```bash
 cd backend/api
 ./mvnw spring-boot:run
 ```
 
-Pe Windows, dacă este necesar, poți folosi și `mvnw.cmd spring-boot:run`.
+On Windows, `mvnw.cmd spring-boot:run` can also be used.
 
-API-ul pornește pe:
+The API runs on:
 
 ```text
 http://localhost:8080
@@ -223,20 +226,18 @@ Health check:
 http://localhost:8080/api/health
 ```
 
-### 3. Pornește microserviciul Notifications
+### 3. Start the Notifications service
 
-Într-un terminal separat:
+In a separate terminal:
 
 ```bash
 cd notifications
 mvn spring-boot:run
 ```
 
-Pe Windows, aceeași comandă poate fi rulată din Git Bash sau dintr-un terminal Maven configurat.
+### 4. Start the frontend
 
-### 4. Pornește frontend-ul
-
-Într-un alt terminal:
+In another terminal:
 
 ```bash
 cd frontend
@@ -244,23 +245,23 @@ npm ci
 npm run dev
 ```
 
-Aplicația este disponibilă la:
+The frontend is available at:
 
 ```text
 http://localhost:5173
 ```
 
-## Conturi și roluri
+## Roles
 
-Înregistrarea din interfață creează conturi cu rolul `CLIENT`. Pentru testare, un utilizator poate fi promovat la `AGENT` sau `MANAGER` prin mecanismul de administrare disponibil managerului.
+New accounts created through the frontend receive the `CLIENT` role. Users can later be assigned the `AGENT` or `MANAGER` role through the administration flow.
 
-| Rol | Permisiuni principale |
+| Role | Main permissions |
 |---|---|
-| CLIENT | Creează și urmărește propriile tichete, folosește FORM și LIVE chat |
-| AGENT | Gestionează coada, tichetele și conversațiile cu clienții |
-| MANAGER | Funcții de agent plus administrarea utilizatorilor |
+| CLIENT | Create and view own tickets; use FORM and LIVE support |
+| AGENT | Manage the ticket queue and communicate with clients |
+| MANAGER | Agent capabilities plus user administration |
 
-## Testare
+## Testing
 
 ### Frontend
 
@@ -278,7 +279,7 @@ cd backend/api
 ./mvnw test
 ```
 
-Testele de integrare folosesc Testcontainers și un PostgreSQL temporar.
+Integration tests use Testcontainers and a temporary PostgreSQL instance.
 
 ### Notifications
 
@@ -289,34 +290,38 @@ mvn test
 
 ### CI
 
-Workflow-ul GitHub Actions rulează testele Maven pentru backend și Notifications, apoi `lint`, `test` și `build` pentru frontend.
+The GitHub Actions workflow runs Maven tests for the backend and Notifications service, followed by frontend linting, tests and production build.
 
-## Structura proiectului
+## Project structure
 
 ```text
 HelperDesk-Analog/
 ├── backend/
-│   └── api/                 # Spring Boot API
-├── notifications/           # Microserviciu RabbitMQ + e-mail
-├── frontend/                # React + TypeScript + Vite
+│   └── api/                 # Spring Boot REST and WebSocket API
+├── notifications/           # RabbitMQ consumer and e-mail service
+├── frontend/                # React + TypeScript + Vite application
 ├── docs/
-│   └── images/              # Capturi și diagrame pentru README
-├── docker-compose.yml       # RabbitMQ și MailHog
-├── .env.example             # Configurație fără secrete
-├── README.md                # Documentația publică a proiectului
-└── README.internal.md       # Documentație internă detaliată
+│   └── images/              # README screenshots and diagrams
+├── docker-compose.yml       # RabbitMQ and MailHog
+├── .env.example             # Configuration template without secrets
+├── README.md                # Public project documentation
+└── README.internal.md       # Detailed internal project documentation
 ```
 
 ## Roadmap
 
-- deployment într-un mediu cloud;
-- observabilitate și logging centralizat;
-- Outbox Pattern pentru garantarea livrării evenimentelor;
-- suport pentru pornirea unui chat LIVE de către utilizatori anonimi;
-- atașamente pentru tichete;
-- mai multe teste end-to-end pentru WebSocket și frontend;
-- hardening pentru secrete, parole și rate limiting.
+- deploy the services to a cloud environment;
+- add centralized logging and observability;
+- use the Outbox Pattern to guarantee event delivery;
+- support anonymous LIVE-chat sessions;
+- add file attachments to tickets;
+- expand WebSocket and frontend end-to-end test coverage;
+- improve production hardening, secret management and rate limiting.
 
-## Licență
+## Internship context
 
-Proiect realizat în scop educațional și de internship la LAZAR Software.
+HelperDesk-Analog was developed as an internship project at **LAZAR Software**. The work covered requirements analysis, database design, backend and frontend implementation, asynchronous messaging, real-time communication, testing and technical documentation.
+
+## License
+
+This project was developed for educational and internship purposes at LAZAR Software.
