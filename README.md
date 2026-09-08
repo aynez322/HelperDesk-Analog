@@ -115,7 +115,7 @@ Imaginile de mai jos sunt placeholdere. Pot fi înlocuite cu capturi reale din a
 
 ### Arhitectura aplicației
 
-![Diagrama arhitecturii aplicației](docs/images/architectura.png)
+![Diagrama arhitecturii aplicației](docs/images/arhitectura.png)
 
 ### Login și înregistrare
 
