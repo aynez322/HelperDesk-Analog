@@ -16,7 +16,7 @@ Thumbs.db
 .idea/
 .vscode/
 
-README.md
+README.internal.md
 
 # Setup script artifacts
 setup-inventory.txt
