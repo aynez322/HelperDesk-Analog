@@ -123,7 +123,7 @@ Imaginile de mai jos sunt placeholdere. Pot fi înlocuite cu capturi reale din a
 
 ### Coada agentului
 
-![Coada agentului](docs/images/agent-queue-placeholder.svg)
+![Coada agentului](docs/images/agent-queue.png)
 
 ### Formular FORM
 
