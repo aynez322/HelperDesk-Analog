@@ -115,11 +115,11 @@ Imaginile de mai jos sunt placeholdere. Pot fi înlocuite cu capturi reale din a
 
 ### Arhitectura aplicației
 
-![Diagrama arhitecturii aplicației](docs/images/architecture-placeholder.svg)
+![Diagrama arhitecturii aplicației](docs/images/architectura.png)
 
 ### Login și înregistrare
 
-![Interfața de autentificare](docs/images/login-placeholder.svg)
+![Interfața de autentificare](docs/images/autentificare.png)
 
 ### Coada agentului
 
@@ -127,11 +127,11 @@ Imaginile de mai jos sunt placeholdere. Pot fi înlocuite cu capturi reale din a
 
 ### Formular FORM
 
-![Crearea unui tichet FORM](docs/images/form-ticket-placeholder.svg)
+![Crearea unui tichet FORM](docs/images/ticket-workflow.png)
 
 ### Chat LIVE
 
-![Chat live între client și agent](docs/images/live-chat-placeholder.svg)
+![Chat live între client și agent](docs/images/live-chat.png)
 
 ## Cerințe
 
